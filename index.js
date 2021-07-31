@@ -6,6 +6,8 @@ const request = require('request');
 const dotenv = require('dotenv').config();
 const token = process.env.DISCORD_KEY;
 
+const helpCmds = require('./templates/help.json');
+
 const PREFIX = '?';
 var version = 'Version 1.0.0';
 
@@ -21,6 +23,10 @@ client.on('message', msg => {
     switch(args[0]){
         case 'ping':
             msg.channel.send('pong!')
+            break;
+        
+        case 'help':
+            msg.channel.send({embed: helpCmds});
             break;
         
         case 'info':
