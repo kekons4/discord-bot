@@ -8,6 +8,11 @@ channel. More features to come.
 ## Installation
 
 You can install this project via https://github.com/kekons4/discord-bot.git
+run "npm i" in terminal to install all dependences.
+
+In the root directory of the project, create a .env file to store your youtube API key and Discord key.
+YOUTUBE_API_KEY and DISCORD_KEY
+
 Technology used: node.js
 libraries used: Discord.js, dotenv, ytdl-core, https, request
 
