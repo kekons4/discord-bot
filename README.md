@@ -2,9 +2,8 @@
 A  basic Discord bot i created. Can join the channel you are in and play youtube videos.
 
 ## Description
-This project is an MVC based social media website that allows users to create
-and account giving them access to post thoughts and ideas. The user can also like, dislike,
-and comment on other peoples posts.
+This project is an Discord Bot. Capable of playing youtube video audio for everyone in the voice
+channel. More features to come.
 
 ## Installation
 
