@@ -7,7 +7,7 @@
         "icon_url": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/55/55b562fa8be7a98a25c0b529cc9f4e183df0ebc2_full.jpg",
         "url": ""
     },
-    "description": "?ping - prints out \"pong!\"\n?info version - prints out current version of Kreios Bot.\n?help - what do you think it does...\n?clear NUMBER- deletes the NUMBER of previous msgs in the text channel.\n?play NAME_OF_VIDEO - Kreios Bot joins voice channel and plays YouTube video.\n?stop - Kreios Bot leaves the voice channel.",
+    "description": "?ping - prints out \"pong!\"\n?info version - prints out current version of Kreios Bot.\n?help - what do you think it does...\n?clear NUMBER- deletes the NUMBER of previous msgs in the text channel.\n?add NAME_OF_VIDEO - Kreios Bot joins voice channel and plays YouTube video.\n?play - plays the next video in the queue\n?stop - Kreios Bot leaves the voice channel.\n?queue - displays all videos in current queue.",
     "image": {
         "url": ""
     }

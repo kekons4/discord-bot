@@ -1,3 +1,4 @@
+// imports
 const discord = require('discord.js')
 const client = new discord.Client();
 const ytdl = require('ytdl-core');
@@ -6,17 +7,24 @@ const request = require('request');
 const dotenv = require('dotenv').config();
 const token = process.env.DISCORD_KEY;
 
+// Embedded msg templates
 const helpCmds = require('./templates/help.json');
+const queueTemplate = require('./templates/queue.json');
 
 const PREFIX = '?';
-var version = 'Version 1.0.0';
+var version = 'Version 1.0.1';
 
 var videoId = 'test';
 
+// Video Queue for YouTube Videos to be played
+const videoQueue = [];
+
+// Checks Whether Bot Successfully is online
 client.on('ready', () => {
     console.log('Bot Online...')
 })
 
+// For each valid command a user enters 
 client.on('message', msg => {
     let args = msg.content.substring(PREFIX.length).split(" ");
 
@@ -41,8 +49,32 @@ client.on('message', msg => {
             msg.channel.bulkDelete(args[1]);
             break;
         case 'play':
+            if(videoQueue.length === 0) {
+                return msg.reply('The Queue is Empty... Use "?add" to add a video.');
+            } else {
+                try {
+
+                    if (msg.member.voice.channel) {
+                        const connection = msg.member.voice.channel.join().then(connection => {
+                            for(let i = 0; i < videoQueue.length; i++) {
+                                msg.channel.send({embed: videoQueue[i].embed});
+                                connection.play((ytdl(videoQueue[i].url, { quality: 'highestaudio' })), {seek: 0, volume: 0.5});
+                                // Remove first video in Queue
+                                videoQueue.shift();
+                            }
+                        });
+                    } else {
+                        msg.reply('You need to join a voice channel first!');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    msg.channel.send("Could not find video, try typing it differently.");
+                }
+            }
+            break;
+        case 'add':
             if(!args[1]) {
-                return msg.reply('ERROR please define second arg...')
+                return msg.reply('You forgot to Enter the video name...')
             } else {
                 var full = '';
                 var i;
@@ -86,19 +118,10 @@ client.on('message', msg => {
                             // },
                         };
 
-                        if (msg.member.voice.channel) {
-                            //console.log("ID3: " + videoId);
-                            msg.channel.send({embed: embeded});
-                            const connection = msg.member.voice.channel.join().then(connection => {
-                                //c2lUhNmdXkE
-                                // console.log(msg.member.voice.channel);
-                                // ytdl('https://www.youtube.com/watch?v=' + videoId, { quality: 'highestaudio' })
-                                connection.play((ytdl('https://www.youtube.com/watch?v=' + videoId, { quality: 'highestaudio' })), {seek: 0, volume: 0.5})
-                            })
-                        
-                        } else {
-                            msg.reply('You need to join a voice channel first!');
-                        }
+                        // Adds video link to Queue
+                        videoQueue.push({url: `https://www.youtube.com/watch?v=${videoId}`, embed: embeded, title: videoTitle});
+                        // Prints out the video that was added to the Queue
+                        msg.channel.send({embed: embeded});
                     });
                 } catch (err) {
                     console.error(err);
@@ -108,6 +131,14 @@ client.on('message', msg => {
             break;
         case 'stop':
             msg.member.voice.channel.leave();
+            break;
+        case 'queue':
+            let videoStr = '';
+            for(let i = 0; i < videoQueue.length; i++) {
+                videoStr += `${i}: ${videoQueue[i].title}\n`;
+            }
+            queueTemplate.description = videoStr;
+            msg.channel.send({embed: queueTemplate});
             break;
     }
     /*if(msg.content === "HELLO") {
