@@ -175,6 +175,10 @@ client.on('message', msg => {
                 queueTemplate.description = videoStr;
                 msg.channel.send({embed: queueTemplate});
                 break;
+            case 'rm':
+                videoQueue.pop();
+                msg.reply("The Previous video has been removed.");
+                break;
             case 'secret':
                 msg.channel.send("Congratz on finding Secret #1... there are others.");
                 break;
