@@ -53,12 +53,21 @@ client.on('message', msg => {
                 if(!args[1]) return msg.reply('ERROR please define second arg...')
                 msg.channel.bulkDelete(args[1]);
                 break;
-            case 'play':
+            case 'next':
                 if(videoQueue.length === 0) {
                     return msg.reply('The Queue is Empty... Use "?add" to add a video.');
                 } else {
-                    try {
 
+                    // this is to remove the first song so it does repeat it after its been played once.
+                    if(videoQueue.length >= 1) videoQueue.shift();
+
+                    // if user try to plays the next video when there is an empty queue
+                    if(videoQueue.length === 0) {
+                        msg.member.voice.channel.leave();
+                        return msg.reply('The Queue is Empty... Use "?add" to add a video.');
+                    }
+
+                    try {
                         if (msg.member.voice.channel) {
                             const connection = msg.member.voice.channel.join().then(connection => {
                                 for(let i = 0; i < videoQueue.length; i++) {
@@ -127,6 +136,27 @@ client.on('message', msg => {
                             videoQueue.push({url: `https://www.youtube.com/watch?v=${videoId}`, embed: embeded, title: videoTitle});
                             // Prints out the video that was added to the Queue
                             msg.channel.send({embed: embeded});
+
+                            // if the added video is the first in the queue play it
+                            if(videoQueue.length === 1) {
+                                try {
+                                    if (msg.member.voice.channel) {
+                                        const connection = msg.member.voice.channel.join().then(connection => {
+                                            for(let i = 0; i < videoQueue.length; i++) {
+                                                // msg.channel.send({embed: videoQueue[i].embed});
+                                                connection.play((ytdl(videoQueue[i].url, { quality: 'highestaudio' })), {seek: 0, volume: 0.5});
+                                                // Remove first video in Queue
+                                                // videoQueue.shift();
+                                            }
+                                        });
+                                    } else {
+                                        msg.reply('You need to join a voice channel first!');
+                                    }
+                                } catch (err) {
+                                    console.error(err);
+                                    msg.channel.send("Could not find video, try typing it differently.");
+                                }
+                            }
                         });
                     } catch (err) {
                         console.error(err);
@@ -134,7 +164,7 @@ client.on('message', msg => {
                     }
                 }
                 break;
-            case 'stop':
+            case 'leave':
                 msg.member.voice.channel.leave();
                 break;
             case 'queue':

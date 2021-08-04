@@ -16,6 +16,6 @@
     "ffmpeg-static": "^4.2.2",
     "opusscript": "0.0.7",
     "request": "^2.88.2",
-    "ytdl-core": "^4.9.0"
+    "ytdl-core": "^4.9.1"
   }
 }
