@@ -7,7 +7,7 @@
         "icon_url": "https://cdn.discordapp.com/avatars/134408412212625408/8d076f01f4d5a70bdbce6888246cbe05.png",
         "url": ""
     },
-    "description": "?ping - prints out \"pong!\"\n?info version - prints out current version of Kreios Bot.\n?help - what do you think it does...\n?clear NUMBER- deletes the NUMBER of previous msgs in the text channel.\n?add NAME_OF_VIDEO - adds a video to the queue.\n?next - plays the next YouTube video in the queue.\n?leave - Kreios Bot leaves the voice channel.\n?rm - removes the previous video in the queue.\n?queue - displays all videos in current queue.",
+    "description": "?ping - prints out \"pong!\"\n?info version - prints out current version of Kreios Bot.\n?help - what do you think it does...\n?clear NUMBER- deletes the NUMBER of previous msgs in the text channel.\n?add NAME_OF_VIDEO - adds a video to the queue.\n?next - plays the next YouTube video in the queue.\n?leave - Kreios Bot leaves the voice channel.\n?rm - removes the previous video in the queue.\n?queue - displays all videos in current queue.\n?play YOUTUBE_URL - plays the YouTube video.",
     "image": {
         "url": ""
     }

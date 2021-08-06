@@ -53,6 +53,26 @@ client.on('message', msg => {
                 if(!args[1]) return msg.reply('ERROR please define second arg...')
                 msg.channel.bulkDelete(args[1]);
                 break;
+            case 'play':
+                if(!args[1]) {
+                    return msg.reply('You forgot to Enter the video name...')
+                } else {
+                    const search = args[1].split("=");
+                    try {
+                        if (msg.member.voice.channel) {
+                            const connection = msg.member.voice.channel.join().then(connection => {
+                                // msg.channel.send({embed: videoQueue[i].embed});
+                                connection.play((ytdl(`${search[0]}=${search[1]}`, { quality: 'highestaudio' })), {seek: 0, volume: 0.5});
+                            });
+                        } else {
+                            msg.reply('You need to join a voice channel first!');
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        msg.channel.send("Could not find video, try typing it differently.");
+                    }
+                }
+                break;
             case 'next':
                 if(videoQueue.length === 0) {
                     return msg.reply('The Queue is Empty... Use "?add" to add a video.');
