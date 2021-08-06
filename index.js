@@ -98,71 +98,74 @@ client.on('message', msg => {
                     }
                     console.log(full);
 
-                    try {
-                        request('https://www.googleapis.com/youtube/v3/search?part=snippet&q='+full+'&key='+process.env.YOUTUBE_API_KEY, function (error, response, body) {
-                            console.log('error:', error); // Print the error if one occurred
-                            console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-                            data = [JSON.parse(body)];
-                            console.log('body:', data[0].items[0].id.videoId);
-                            videoId = data[0].items[0].id.videoId;
-                            console.log("title: " + data[0].items[0].snippet.title);
-                            const videoTitle = data[0].items[0].snippet.title;
-                            // console.log(data[0].items[0]);
+                    // try {
+                    request('https://www.googleapis.com/youtube/v3/search?part=snippet&q='+full+'&key='+process.env.YOUTUBE_API_KEY, function (error, response, body) {
+                        data = [JSON.parse(body)];
+                        // console.log(data[0].pageInfo);
+                        if(data[0].pageInfo.totalResults === 0) return;
+                        console.log('error:', error); // Print the error if one occurred
+                        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+                        console.log('body:', data[0].items[0].id.videoId);
+                        videoId = data[0].items[0].id.videoId;
+                        console.log("title: " + data[0].items[0].snippet.title);
+                        const videoTitle = data[0].items[0].snippet.title;
+                        // console.log(data[0].items[0]);
 
-                            const embeded = {
-                                color: "f50606",
-                                title: videoTitle,
-                                url: `https://www.youtube.com/watch?v=${videoId}`,
-                                author: {
-                                    name: data[0].items[0].snippet.channelTitle,
-                                    icon_url: 'https://cliply.co/wp-content/uploads/2019/04/371903520_SOCIAL_ICONS_YOUTUBE.png',
-                                    url: `https://www.youtube.com/channel/${data[0].items[0].snippet.channelId}`,
-                                },
-                                description: 'YouTube',
-                                // thumbnail: {
-                                //     url: 'https://i.imgur.com/wSTFkRM.png',
-                                // },
-                                image: {
-                                    url: data[0].items[0].snippet.thumbnails.high.url,
-                                },
-                                // timestamp: new Date(),
-                                // footer: {
-                                //     text: 'Some footer text here',
-                                //     icon_url: 'https://i.imgur.com/wSTFkRM.png',
-                                // },
-                            };
+                        const embeded = {
+                            color: "f50606",
+                            title: videoTitle,
+                            url: `https://www.youtube.com/watch?v=${videoId}`,
+                            author: {
+                                name: data[0].items[0].snippet.channelTitle,
+                                icon_url: 'https://cliply.co/wp-content/uploads/2019/04/371903520_SOCIAL_ICONS_YOUTUBE.png',
+                                url: `https://www.youtube.com/channel/${data[0].items[0].snippet.channelId}`,
+                            },
+                            description: 'YouTube',
+                            // thumbnail: {
+                            //     url: 'https://i.imgur.com/wSTFkRM.png',
+                            // },
+                            image: {
+                                url: data[0].items[0].snippet.thumbnails.high.url,
+                            },
+                            // timestamp: new Date(),
+                            // footer: {
+                            //     text: 'Some footer text here',
+                            //     icon_url: 'https://i.imgur.com/wSTFkRM.png',
+                            // },
+                        };
 
-                            // Adds video link to Queue
-                            videoQueue.push({url: `https://www.youtube.com/watch?v=${videoId}`, embed: embeded, title: videoTitle});
-                            // Prints out the video that was added to the Queue
-                            msg.channel.send({embed: embeded});
+                        // Adds video link to Queue
+                        videoQueue.push({url: `https://www.youtube.com/watch?v=${videoId}`, embed: embeded, title: videoTitle});
+                        // Prints out the video that was added to the Queue
+                        msg.channel.send({embed: embeded});
 
-                            // if the added video is the first in the queue play it
-                            if(videoQueue.length === 1) {
-                                try {
-                                    if (msg.member.voice.channel) {
-                                        const connection = msg.member.voice.channel.join().then(connection => {
-                                            for(let i = 0; i < videoQueue.length; i++) {
-                                                // msg.channel.send({embed: videoQueue[i].embed});
-                                                connection.play((ytdl(videoQueue[i].url, { quality: 'highestaudio' })), {seek: 0, volume: 0.5});
-                                                // Remove first video in Queue
-                                                // videoQueue.shift();
-                                            }
-                                        });
-                                    } else {
-                                        msg.reply('You need to join a voice channel first!');
-                                    }
-                                } catch (err) {
-                                    console.error(err);
-                                    msg.channel.send("Could not find video, try typing it differently.");
+                        // if the added video is the first in the queue play it
+                        if(videoQueue.length === 1) {
+                            try {
+                                if (msg.member.voice.channel) {
+                                    const connection = msg.member.voice.channel.join().then(connection => {
+                                        for(let i = 0; i < videoQueue.length; i++) {
+                                            // msg.channel.send({embed: videoQueue[i].embed});
+                                            connection.play((ytdl(videoQueue[i].url, { quality: 'highestaudio' })), {seek: 0, volume: 0.5});
+                                            // Remove first video in Queue
+                                            // videoQueue.shift();
+                                        }
+                                    });
+                                } else {
+                                    msg.reply('You need to join a voice channel first!');
                                 }
+                            } catch (err) {
+                                console.error(err);
+                                msg.channel.send("Could not find video, try typing it differently.");
                             }
+                        }
                         });
-                    } catch (err) {
-                        console.error(err);
-                        msg.channel.send("Could not find video, try typing it differently.");
-                    }
+                    // } catch (err) {
+                    //     console.error(err);
+                    //     msg.channel.send("Could not find video, try typing it differently.");
+                    // }
                 }
+                msg.channel.send("Could not find video, try typing it differently.");
                 break;
             case 'leave':
                 msg.member.voice.channel.leave();
